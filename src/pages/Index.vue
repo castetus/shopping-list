@@ -25,8 +25,8 @@
 import { Todo, Meta } from 'components/models';
 import ExampleComponent from 'components/CompositionComponent.vue';
 import { defineComponent, ref, computed } from 'vue';
-import { useStore } from 'vuex';
 import { List } from 'src/types/types';
+import { useStore } from 'vuex';
 import { storeKey } from '../store/index';
 
 export default defineComponent({

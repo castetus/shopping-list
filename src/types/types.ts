@@ -1,6 +1,6 @@
 export interface ListItem {
-  id: number,
-  name: string,
+  text: string,
+  qty: number | null,
 }
 
 export interface List {

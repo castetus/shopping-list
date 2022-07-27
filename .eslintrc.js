@@ -71,6 +71,9 @@ module.exports = {
 
   // add your custom rules here
   rules: {
+    'no-underscore-dangle': 'off',
+    'no-unused-vars': 'warn',
+
     'no-param-reassign': 'off',
     'no-void': 'off',
     'no-nested-ternary': 'off',
