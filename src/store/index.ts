@@ -7,7 +7,7 @@ import {
 } from 'vuex';
 
 import { List } from 'src/types/types';
-import lists from './lists';
+import listsModule from './lists';
 
 /*
  * If not building with SSR mode, you can
@@ -22,7 +22,9 @@ export interface StateInterface {
   // Define your own store structure, using submodules if needed
   // example: ExampleStateInterface;
   // Declared as unknown to avoid linting issue. Best to strongly type as per the line above.
-  lists: Array<List>
+  listsModule: {
+    lists: Array<List>,
+  }
 }
 
 // provide typings for `this.$store`
@@ -38,7 +40,7 @@ export const storeKey: InjectionKey<VuexStore<StateInterface>> = Symbol('vuex-ke
 export default store((/* { ssrContext } */) => {
   const Store = createStore<Array<List>>({
     modules: {
-      lists,
+      listsModule,
     },
 
     // enable strict mode (adds overhead!)

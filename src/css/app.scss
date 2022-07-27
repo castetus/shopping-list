@@ -1,6 +1,11 @@
 // app global css in SCSS form
+@font-face {
+  font-family: Shadows;
+  src: url('src/assets/fonts/ShadowsIntoLight-Regular.ttf');
+}
 * {
   box-sizing: border-box;
+  // font-family: Shadows, sans-serif;
 }
 body {
   width: 100%;

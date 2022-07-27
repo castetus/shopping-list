@@ -1,6 +1,18 @@
 <template>
-  <q-page class="row items-center justify-evenly">
+  <q-page class="items-center justify-evenly">
+    <div
+      class="list"
+      v-for="(list, index) in lists"
+      :key="index"
+      >
+      <router-link
+        class="list__link"
+        :to="{name: 'list', params: {id: list.id}}"
+      >{{list.name}}
+      </router-link>
+    </div>
     <example-component
+      v-show="false"
       title="Example component"
       active
       :todos="todos"
@@ -12,8 +24,9 @@
 <script lang="ts">
 import { Todo, Meta } from 'components/models';
 import ExampleComponent from 'components/CompositionComponent.vue';
-import { defineComponent, ref } from 'vue';
+import { defineComponent, ref, computed } from 'vue';
 import { useStore } from 'vuex';
+import { List } from 'src/types/types';
 import { storeKey } from '../store/index';
 
 export default defineComponent({
@@ -21,8 +34,6 @@ export default defineComponent({
   components: { ExampleComponent },
   setup() {
     const store = useStore(storeKey);
-
-    console.log(store);
 
     const todos = ref<Todo[]>([
       {
@@ -52,8 +63,17 @@ export default defineComponent({
     return {
       todos,
       meta,
-      lists: store.state,
+      lists: computed((): Array<List> => store.state.listsModule.lists),
     };
   },
 });
 </script>
+
+<style lang="scss">
+  .list {
+    &__link {
+      color: $dark;
+      text-decoration: none;
+    }
+  }
+</style>
