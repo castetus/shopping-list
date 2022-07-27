@@ -16,7 +16,7 @@
     <q-page-container>
       <router-view />
     </q-page-container>
-    <q-dialog v-model="listName">
+    <q-dialog v-model="listEditorOpen">
       <ListEditor :listName="''"/>
     </q-dialog>
   </q-layout>
@@ -37,6 +37,7 @@ export default defineComponent({
     const listEditorOpen = ref(false);
 
     return {
+      listEditorOpen,
       toggleListEditor() {
         listEditorOpen.value = !listEditorOpen.value;
       },

@@ -13,11 +13,17 @@
 import { Todo, Meta } from 'components/models';
 import ExampleComponent from 'components/CompositionComponent.vue';
 import { defineComponent, ref } from 'vue';
+import { useStore } from 'vuex';
+import { storeKey } from '../store/index';
 
 export default defineComponent({
   name: 'PageIndex',
   components: { ExampleComponent },
   setup() {
+    const store = useStore(storeKey);
+
+    console.log(store);
+
     const todos = ref<Todo[]>([
       {
         id: 1,
@@ -43,7 +49,11 @@ export default defineComponent({
     const meta = ref<Meta>({
       totalCount: 1200,
     });
-    return { todos, meta };
+    return {
+      todos,
+      meta,
+      lists: store.state,
+    };
   },
 });
 </script>
