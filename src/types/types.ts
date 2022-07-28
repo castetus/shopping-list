@@ -1,4 +1,5 @@
 export interface ListItem {
+  id: number,
   text: string,
   qty: number | null,
   checked: boolean

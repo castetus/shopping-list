@@ -5,12 +5,14 @@ import {
   Store as VuexStore,
   useStore as vuexUseStore,
 } from 'vuex';
-import { moduleInt } from './types';
+import { moduleInt, vocabularyInt } from './types';
 
 import listsModule from './lists';
+import vocabularyModule from './vocabulary';
 
 export interface StateInterface {
   listsModule: moduleInt
+  vocabularyModule: vocabularyInt
 }
 
 // provide typings for `this.$store`
@@ -27,6 +29,7 @@ export default store((/* { ssrContext } */) => {
   const Store = createStore<StateInterface>({
     modules: {
       listsModule,
+      vocabularyModule,
     },
 
     // enable strict mode (adds overhead!)
