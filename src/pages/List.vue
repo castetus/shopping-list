@@ -3,45 +3,67 @@
     <div class="paper">
       <template v-if="items.length">
         <div
-          class="list-item"
+          :class="['list-item', { 'list-item_crossed-out': item.checked }]"
           v-for="(item, index) in items"
           :key="index"
         >
           <span class="list-item__number">{{index + 1}}.</span>
           <span class="list-item__text">{{item.text}}</span>
           <span class="list-item__qty">{{item.qty}}</span>
+          <q-btn
+            flat
+            icon="edit"
+            size="xs"
+            class="list-item__btn"
+            @click="openEditor(index)"
+          />
         </div>
       </template>
     </div>
+    <q-dialog v-model="isEditorOpen">
+      <ItemEditor :item="currentItem"/>
+    </q-dialog>
   </q-page>
 </template>
 
-<script lang="ts">
-import { ListItem } from 'src/types/types';
-import { defineComponent, onMounted, reactive } from 'vue';
+<script>
+import {
+  defineComponent, computed, reactive, ref,
+} from 'vue';
 import { useRoute } from 'vue-router';
 import { useStore } from 'vuex';
+import ItemEditor from 'src/components/ItemEditor.vue';
 import { storeKey } from '../store/index';
 
 export default defineComponent({
 
+  components: { ItemEditor },
+
   setup() {
     const route = useRoute();
-    const listId = route.params.id;
+    const listId = Number(route.params.id);
 
     const store = useStore(storeKey);
 
-    const currentList = store.getters['listsModule/getListById'](1);
+    const lists = computed(() => store.state.listsModule.lists);
+    const currentList = lists.value.find((el) => el.id === listId);
+    const items = currentList ? currentList.items : [];
 
-    console.log(currentList);
+    const currentItem = reactive({});
 
-    // const getItems = (route.params.id) => {
-    //   computed(() => )
-    // }
+    const isEditorOpen = ref(false);
+
+    const openEditor = (index) => {
+      Object.assign(currentItem, items[index]);
+      isEditorOpen.value = true;
+    };
+
     return {
       curLink: route.params.id,
-      items: [],
-      // _items,
+      items,
+      isEditorOpen,
+      openEditor,
+      currentItem,
     };
   },
 });
@@ -51,5 +73,12 @@ export default defineComponent({
   .list-item {
     display: flex;
     justify-content: space-between;
+    &__btn {
+      height: 31px;
+      line-height: 0;
+    }
+    &_crossed-out {
+      text-decoration: line-through;
+    }
   }
 </style>

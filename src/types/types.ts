@@ -1,6 +1,7 @@
 export interface ListItem {
   text: string,
   qty: number | null,
+  checked: boolean
 }
 
 export interface List {

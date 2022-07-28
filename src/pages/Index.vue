@@ -60,10 +60,11 @@ export default defineComponent({
     const meta = ref<Meta>({
       totalCount: 1200,
     });
+    const lists = computed((): Array<List> => store.state.listsModule.lists);
     return {
       todos,
       meta,
-      lists: computed((): Array<List> => store.state.listsModule.lists),
+      lists,
     };
   },
 });
