@@ -73,6 +73,7 @@ module.exports = {
   rules: {
     'no-underscore-dangle': 'off',
     'no-unused-vars': 'warn',
+    'class-methods-use-this': 'off',
 
     'no-param-reassign': 'off',
     'no-void': 'off',

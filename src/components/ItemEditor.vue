@@ -1,9 +1,11 @@
 <template>
       <q-card style="width: 90%">
         <q-card-section class="q-pt-none">
-          <q-input dense autofocus v-model="data.text"/>
+          <q-input dense autofocus v-model="data.text" @keypress.enter="save"/>
         </q-card-section>
-
+        <q-card-section class="q-pt-none">
+          <q-input dense v-model="data.qty" @keypress.enter="save"/>
+        </q-card-section>
         <q-card-actions align="right" class="text-primary">
           <q-btn flat label="Cancel" v-close-popup />
           <q-btn flat label="Save" v-close-popup @click="save"/>
@@ -25,7 +27,7 @@ export default defineComponent({
     },
   },
 
-  setup(props) {
+  setup(props, { emit }) {
     const data: ListItem = reactive({
       id: 0,
       text: '',
@@ -37,13 +39,13 @@ export default defineComponent({
       Object.assign(data, props.item);
     });
 
-    // const save = () => {
-
-    // };
+    const save = () => {
+      emit('save', data);
+    };
 
     return {
       data,
-      // save,
+      save,
     };
   },
 });

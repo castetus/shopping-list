@@ -8,6 +8,21 @@
           </q-btn>
         </template>
       </q-input>
+      <div class="menu-container">
+        <q-menu no-focus v-model="isSuggestOpen">
+          <q-list style="min-width: 100px">
+            <q-item
+              v-for="(suggest, index) in suggests"
+              :key="index"
+              clickable
+              v-close-popup
+              @click="addItem(suggest)"
+            >
+              <q-item-section>{{suggest}}</q-item-section>
+            </q-item>
+          </q-list>
+        </q-menu>
+      </div>
     </div>
     <div class="paper">
       <template v-if="items.length">
@@ -42,20 +57,20 @@
       </template>
     </div>
     <q-dialog v-model="isEditorOpen">
-      <ItemEditor :item="currentItem" />
+      <ItemEditor :item="currentItem" @save="saveItem"/>
     </q-dialog>
   </q-page>
 </template>
 
 <script lang="ts">
 import {
-  defineComponent, computed, reactive, ref, onBeforeUnmount,
+  defineComponent, computed, reactive, ref, onBeforeUnmount, watch,
 } from 'vue';
 import { useRoute } from 'vue-router';
 import { useStore } from 'vuex';
 import ItemEditor from 'src/components/ItemEditor.vue';
-import { ListItem } from 'src/types/types';
-import { saveList, removeList } from '../functions/functions';
+import { List, ListItem } from 'src/types/types';
+import type { Ref } from 'vue';
 import { storeKey } from '../store/index';
 
 export default defineComponent({
@@ -67,6 +82,7 @@ export default defineComponent({
     const listId = Number(route.params.id);
 
     const store = useStore(storeKey);
+    const { vocabulary } = store.state.vocabularyModule;
     const lists = computed(() => store.state.listsModule.lists);
     const currentList = lists.value.find((el) => el.id === listId);
     if (!currentList) {
@@ -78,13 +94,23 @@ export default defineComponent({
     const currentItem = reactive({});
 
     const isEditorOpen = ref(false);
+    const isSuggestOpen = ref(false);
+    const suggests: Ref<string[]> = ref([]);
 
     const newItemText = ref('');
 
-    const addItem = () => {
+    const saveList = (list: List) => {
+      store.commit('listsModule/SAVE_LIST', list);
+    };
+
+    const addItem = async (text = '') => {
+      if (!text || typeof text !== 'string') {
+        text = newItemText.value;
+        await store.dispatch('vocabularyModule/addWord', newItemText.value);
+      }
       const newItem: ListItem = {
         id: Date.now(),
-        text: newItemText.value,
+        text,
         qty: null,
         checked: false,
       };
@@ -97,13 +123,37 @@ export default defineComponent({
       isEditorOpen.value = true;
     };
 
-    const toggleCheck = (index: number) => {
-      const payload = {
-        listId: currentList.id,
-        itemId: items[index].id,
-      };
-      store.commit('listsModule/TOGGLE_CHECK', payload);
+    const showSuggest = (str: string) => {
+      suggests.value = vocabulary.filter((el) => el.includes(str)).sort();
+      isSuggestOpen.value = true;
     };
+
+    const toggleCheck = (index: number) => {
+      const item = items[index];
+      items.splice(index, 1);
+      item.checked = !item.checked;
+      if (item.checked) {
+        items.push(item);
+      } else {
+        items.unshift(item);
+      }
+      store.commit('listsModule/SAVE_LIST', currentList);
+    };
+
+    const saveItem = (item: ListItem) => {
+      const index = currentList.items.findIndex((el) => el.id === item.id);
+      currentList.items[index] = item;
+      saveList(currentList);
+    };
+
+    watch(newItemText, (val) => {
+      if (newItemText.value.length < 3) {
+        isSuggestOpen.value = false;
+        return false;
+      }
+      showSuggest(val);
+      return true;
+    });
 
     onBeforeUnmount(() => saveList(currentList));
 
@@ -116,6 +166,9 @@ export default defineComponent({
       currentItem,
       newItemText,
       addItem,
+      isSuggestOpen,
+      suggests,
+      saveItem,
     };
   },
 });

@@ -68,13 +68,6 @@ const getters: GetterTree<moduleInt, StateInterface> = {
 };
 
 const mutations: MutationTree<moduleInt> = {
-  TOGGLE_CHECK(moduleState, payload: {listId: number, itemId: number}) {
-    const list = moduleState.lists.find((el) => el.id === payload.listId);
-    const item = list?.items.find((el) => el.id === payload.itemId);
-    if (item) {
-      item.checked = !item?.checked;
-    }
-  },
   SAVE_LIST(moduleState, payload: List) {
     const list = moduleState.lists.find((el) => el.id === payload.id);
     if (list) {

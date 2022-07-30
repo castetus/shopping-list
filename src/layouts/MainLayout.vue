@@ -8,8 +8,13 @@
             <img src="https://cdn.quasar.dev/logo-v2/svg/logo-mono-white.svg">
           </q-avatar>
         </q-toolbar-title>
+        <q-btn v-if="!rootPage">
+          <router-link to="/">
+            <q-icon name="arrow_back" color="grey-1"></q-icon>
+          </router-link>
+        </q-btn>
         <q-space></q-space>
-        <q-btn outline color="grey-1" icon="add" @click="toggleListEditor"/>
+        <q-btn outline color="grey-1" icon="add" @click="toggleListEditor" v-if="rootPage"/>
       </q-toolbar>
     </q-header>
 
@@ -23,7 +28,8 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref } from 'vue';
+import { defineComponent, ref, computed } from 'vue';
+import { useRoute } from 'vue-router';
 import ListEditor from '../components/ListEditor.vue';
 
 export default defineComponent({
@@ -36,11 +42,14 @@ export default defineComponent({
   setup() {
     const listEditorOpen = ref(false);
 
+    const rootPage = computed(() => useRoute().path === '/');
+
     return {
       listEditorOpen,
       toggleListEditor() {
         listEditorOpen.value = !listEditorOpen.value;
       },
+      rootPage,
     };
   },
 });

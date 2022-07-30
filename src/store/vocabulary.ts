@@ -1,11 +1,33 @@
-import { Module, MutationTree } from 'vuex';
+import { Module, MutationTree, ActionTree } from 'vuex';
 import { StateInterface } from './index';
 import { vocabularyInt } from './types';
+import Api from './Api';
+
+const api = new Api();
 
 const state = {
-  vocabulary: [
+  vocabulary: [],
+};
 
-  ],
+const actions: ActionTree<vocabularyInt, StateInterface> = {
+  // eslint-disable-next-line no-shadow
+  async addWord({ state, commit, dispatch }, payload: string) {
+    commit('ADD_WORD', payload);
+    await dispatch('writeVocabulary', state.vocabulary);
+  },
+  writeVocabulary({ commit }, data: vocabularyInt) {
+    const write = api.write('vocabulary', data);
+    if (write) {
+      commit('SET_VOCABULARY', data);
+    }
+  },
+  // eslint-disable-next-line no-shadow
+  readVocabulary({ commit }) {
+    const result = api.read('vocabulary');
+    if (result) {
+      commit('SET_VOCABULARY', result);
+    }
+  },
 };
 
 const mutations: MutationTree<vocabularyInt> = {
@@ -20,6 +42,7 @@ const mutations: MutationTree<vocabularyInt> = {
 const vocabularyModule: Module<vocabularyInt, StateInterface> = {
   namespaced: true,
   state,
+  actions,
   mutations,
 };
 
