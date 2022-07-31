@@ -6,43 +6,51 @@
         </q-card-section>
 
         <q-card-section class="q-pt-none">
-          <q-input dense v-model="_listName" autofocus />
+          <q-input dense v-model="_list.name" autofocus />
         </q-card-section>
 
         <q-card-actions align="right" class="text-primary">
           <q-btn flat label="Cancel" v-close-popup />
-          <q-btn flat label="Save" v-close-popup />
+          <q-btn flat label="Remove" v-close-popup @click="remove"/>
+          <q-btn flat label="Save" v-close-popup @click="save"/>
         </q-card-actions>
       </q-card>
 
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue';
+import { defineComponent, PropType, ref } from 'vue';
+import { List } from '../types/types';
 
 export default defineComponent({
 
   props: {
-    listName: {
-      type: String,
-      default: '',
+    list: {
+      type: Object as PropType<List>,
+      default: (): List => ({
+        id: Date.now(),
+        name: '',
+        items: [],
+      }),
     },
   },
 
-  computed: {
-    _listName: {
-      get() {
-        return this.listName;
-      },
-      set(val: string) {
-        this.$emit('emit', val);
-      },
-    },
-  },
+  setup(props, { emit }) {
+    const _list = ref(props.list).value;
+    console.log(props.list);
 
-  setup() {
+    const save = () => {
+      emit('saveList', _list);
+    };
+
+    const remove = () => {
+      emit('removeList', _list?.id);
+    };
+
     return {
-
+      _list,
+      save,
+      remove,
     };
   },
 });

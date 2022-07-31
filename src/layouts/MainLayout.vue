@@ -14,41 +14,28 @@
           </router-link>
         </q-btn>
         <q-space></q-space>
-        <q-btn outline color="grey-1" icon="add" @click="toggleListEditor" v-if="rootPage"/>
+        <q-btn outline color="grey-1" icon="add"  v-if="rootPage"/>
       </q-toolbar>
     </q-header>
 
     <q-page-container>
       <router-view />
     </q-page-container>
-    <q-dialog v-model="listEditorOpen">
-      <ListEditor :listName="''"/>
-    </q-dialog>
+
   </q-layout>
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, computed } from 'vue';
+import { defineComponent, computed } from 'vue';
 import { useRoute } from 'vue-router';
-import ListEditor from '../components/ListEditor.vue';
 
 export default defineComponent({
   name: 'MainLayout',
 
-  components: {
-    ListEditor,
-  },
-
   setup() {
-    const listEditorOpen = ref(false);
-
     const rootPage = computed(() => useRoute().path === '/');
 
     return {
-      listEditorOpen,
-      toggleListEditor() {
-        listEditorOpen.value = !listEditorOpen.value;
-      },
       rootPage,
     };
   },

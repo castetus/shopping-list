@@ -1,8 +1,13 @@
 import { List } from 'src/types/types';
-import { Module, GetterTree, MutationTree } from 'vuex';
+import {
+  Module, GetterTree, MutationTree, ActionTree,
+} from 'vuex';
 import { ListItem } from '../types/types';
 import { moduleInt } from './types';
 import { StateInterface } from './index';
+import Api from './Api';
+
+const api = new Api();
 
 const state:moduleInt = {
   lists: [
@@ -67,7 +72,19 @@ const getters: GetterTree<moduleInt, StateInterface> = {
   },
 };
 
+const actions: ActionTree<moduleInt, StateInterface> = {
+  saveLists({ commit }, lists: moduleInt) {
+    const write = api.write('lists', lists);
+    if (write) {
+      commit('SAVE_LISTS', lists);
+    }
+  },
+};
+
 const mutations: MutationTree<moduleInt> = {
+  SAVE_LISTS(moduleState, payload: moduleInt) {
+    moduleState = payload;
+  },
   SAVE_LIST(moduleState, payload: List) {
     const list = moduleState.lists.find((el) => el.id === payload.id);
     if (list) {
@@ -90,6 +107,7 @@ const listsModule: Module<moduleInt, StateInterface> = {
   namespaced: true,
   state,
   getters,
+  actions,
   mutations,
 };
 
